@@ -41,6 +41,7 @@ cat_idx_dict = {
     "bank": [1,2,3,4,6,7,8,10,15],
     "jungle": [],
     "calhousing": [],
+    "limph":[]
 }
 bin_num = 10
 
@@ -50,23 +51,19 @@ def main():
     logging.basicConfig(level=logging.INFO)
 
     # Configuration
-    data_dir = Path("/root/TabLLM/datasets")
-    data_dir = data_dir / args.dataset
-    temp_output = 'dataset-generation-' + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    output_dir = Path("/root/TabLLM/datasets_serialized") / temp_output
-    if not args.debug:
-        os.mkdir(output_dir)
+    data_dir = Path("./datasets") / args.dataset
+    # output_name = 'dataset-generation-' + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    output_dir = Path("datasets_serialized")
     logger.info(f"Generate dataset {args.dataset}.")
 
-    if not args.list and args.permuted:
-        raise ValueError("Permuted note is not supported.")
     dataset_name = args.dataset + \
                    ('_list' if args.list else '') + \
                    ('_permuted' if args.permuted else '') + \
                    ('_values' if args.values else '') + \
                    ('_shuffled' if args.shuffled else '') + \
                    ('_importance' if args.feature_importance else '')
-    dataset = load_train_validation_test(args.dataset, data_dir)
+    dataset = load_train_validation_test(args, args.dataset, data_dir)
+    
 
     if args.debug:
         dataset['train'] = dataset['train'].sample(min(10, len(dataset['train'])))
@@ -137,6 +134,11 @@ def main():
         
         dataset = shuffle_dataset(dataset)
 
+    # for _, r in dataset.iterrows():
+    #     print('===========')
+    #     print(_)
+    #     print('===========')
+    #     print(r)
     notes = [NoteGenerator.clean_note(note_generator.substitute(r)) for _, r in dataset.iterrows()]
     old_size_notes = len(notes)
     start = 0  # 25000
@@ -222,10 +224,10 @@ def main():
     if not args.debug:
         logger.info(f"Store generated datasets to {output_dir}/{dataset_name}")
         logger.info(f"\tn={len(dataset)}, feats={dataset.num_columns}, labels={dict(Counter(dataset['label']))}")
-        dataset.save_to_disk(output_dir / dataset_name)
+        dataset.save_to_disk(str(output_dir / dataset_name))
 
 
-def load_train_validation_test(dataset_name, data_dir):
+def load_train_validation_test(args, dataset_name, data_dir):
     # Load existing data, put into train, validation, test and create label
     def train_validation_test_split(data):
         # Don't want to shuffle bc done later with right seed to make it identical with external evaluation
@@ -363,23 +365,13 @@ def load_train_validation_test(dataset_name, data_dir):
         dataset_train, dataset_valid, dataset_test = train_validation_test_split(dataset)
         assert len(dataset_train) + len(dataset_valid) + len(dataset_test) == original_size
 
+    elif dataset_name == "limph":
+        dataset = pd.read_csv(data_dir / 'inbody.csv').dropna()
+        dataset = dataset.rename(columns={args.label: 'label'})
+        dataset['label'] = dataset['label'].apply(lambda x: int(1) if x > 0 else int(0))
+        dataset_train, dataset_valid, dataset_test = train_validation_test_split(dataset)
     else:
         raise ValueError("Dataset not found")
-
-    # For final experiments, ensure correct numbers of features for each dataset
-    dataset_specs = {
-        'income': 13,
-        'car': 7,
-        'heart': 12,
-        'diabetes': 9,
-        'creditg': 21,
-        'blood': 5,
-        'bank': 17,
-        'jungle': 7,
-        'wine': 12,
-        'calhousing': 9
-    }
-    assert dataset_name in dataset_specs.keys() and len(dataset.columns) == dataset_specs[dataset_name]
 
     dataset = {"train": dataset_train, "validation": dataset_valid, "test": dataset_test}
     return dataset
@@ -514,6 +506,7 @@ def parse_args():
         "--debug",
         action="store_true",
     )
+    parser.add_argument("--label", type=str,default='Lymphedema_Treatment',help='the output label')
     parser.add_argument(
         "--seed",
         type=int,

@@ -109,7 +109,7 @@ class NoteGenerator:
         assert set(self.person_ids) == set(self.visits['person_id'].tolist())
 
         # Load id - value mapping
-        with open('/root/omop-pkg/misc/permute_concepts/id_value_map_eol_loh_surgery.txt', 'r') as file:
+        with open('/codespace/TABLLM/omop-pkg/misc/permute_concepts/id_value_map_eol_loh_surgery.txt', 'r') as file:
             self.values = {int(k): v for k, v in (json.load(file)).items()}
         if feature_weights_list is None or zero_shot_weights is not None:
             feature_weights_list = pd.DataFrame([], columns=['concept_id', 'interval', 'weight'])
@@ -123,7 +123,7 @@ class NoteGenerator:
 
         # Read dictionaries for permuting concepts
         def read_permuted_concepts(file_name):
-            with open('/root/omop-pkg/misc/permute_concepts/' + file_name) as f:
+            with open('/codespace/TABLLM/omop-pkg/misc/permute_concepts/' + file_name) as f:
                 return eval(f.readline())
         self.permuted_conditions = read_permuted_concepts('condition_ids_permuted.txt')
         self.permuted_procedures = read_permuted_concepts('procedure_ids_permuted.txt')
@@ -795,7 +795,7 @@ def read_shortened_concepts(file_name):
     # Read dictionaries for shortening concepts
     if file_name is None:
         return {}
-    with open('/root/omop-pkg/misc/shorten_concepts/' + file_name) as f:
+    with open('/codespace/TABLLM/omop-pkg/misc/shorten_concepts/' + file_name) as f:
         shortened_concepts = eval(f.readline())
         for k, v in shortened_concepts.items():
             v = v.strip()

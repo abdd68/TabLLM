@@ -56,12 +56,12 @@ def main():
     }
 
     # Hijack parameter for running all
-    args_datasets = ['car', 'income', 'heart', 'diabetes', 'blood', 'bank', 'jungle', 'creditg', 'calhousing']
+    args_datasets = ['car', 'income', 'heart', 'diabetes', 'blood', 'bank', 'jungle', 'creditg', 'calhousing', 'limph']
     all_results = pd.DataFrame([], index=args_datasets)
     all_results_sd = pd.DataFrame([], index=args_datasets)
     for args.dataset in args_datasets:
         # Configuration
-        data_dir = Path("/root/TabLLM/datasets")
+        data_dir = Path("/codespace/TABLLM/TabLLM/datasets")
         data_dir = data_dir / args.dataset
 
         models = ['lr']
@@ -87,7 +87,7 @@ def main():
 
                 # Need to replicate exactly tfew cohorts here by following create_external_dataset and tfew code.
                 # 1. Load data as in create_external_datasets to get same splits
-                dataset = load_train_validation_test(args.dataset, data_dir)
+                dataset = load_train_validation_test(args, args.dataset, data_dir)
                 if i == 0:
                     print(f"Original columns: {list(dataset['train'].columns)}")
                 dataset = DatasetDict({k: Dataset.from_pandas(v, preserve_index=False) for k, v in dataset.items()})

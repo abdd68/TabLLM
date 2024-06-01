@@ -266,6 +266,55 @@ template_config_car_list_values = template_config_car_list
 template_car_list_shuffled = template_car_list
 template_config_car_list_shuffled = template_config_car_list
 
+########################################################################################################################
+# limph
+########################################################################################################################
+template_config_limph = {
+    'pre': {
+        'Username': lambda x: f"{int(x)}",
+        'Differential_Volume_mL': lambda x: f"{x}",
+        'Weight_lb': lambda x: f"{x}",
+        'RA_5kHz': lambda x: f"{x}",
+        'LA_5kHz': lambda x: f"{x}",
+        'RA_50kHz': lambda x: f"{x}",
+        'LA_50kHz': lambda x: f"{x}",
+        'RA_500kHz': lambda x: f"{x}",
+        'LA_500kHz': lambda x: f"{x}"
+    }
+}
+template_limph = 'The Username is ${Username}. ' \
+               'The Differential Volume (mL) is ${Differential_Volume_mL}. ' \
+               'The 5kHz RA is ${RA_5kHz}. ' \
+               'The 5kHz LA is ${LA_5kHz}. ' \
+               'The Weight (lb) is ${Weight_lb}. ' \
+               'The 50kHz RA is ${RA_50kHz}. ' \
+               'The 50kHz LA is ${LA_50kHz}. ' \
+               'The 500kHz RA is ${RA_500kHz}. ' \
+               'The 500kHz LA is ${LA_500kHz}. ' \
+
+# template_limph_list = '- Buying price: ${buying}\n' \
+#                     '- Doors: ${doors}\n' \
+#                     '- Maintenance costs: ${maint}\n' \
+#                     '- Persons: ${persons}\n' \
+#                     '- Safety score: ${safety_dict}\n' \
+#                     '- Trunk size: ${lug_boot}'
+# template_config_limph_list = template_config_limph
+# template_limph_list_permuted = '- Buying price: ${safety_dict}\n' \
+#                              '- Doors: ${buying}\n' \
+#                              '- Maintenance costs: ${lug_boot}\n' \
+#                              '- Persons: ${doors}\n' \
+#                              '- Safety score: ${maint}\n' \
+#                              '- Trunk size: ${persons}'
+# template_config_limph_list_permuted = template_config_limph
+# template_limph_list_values = '${buying}\n' \
+#                            '${doors}\n' \
+#                            '${maint}\n' \
+#                            '${persons}\n' \
+#                            '${safety_dict}\n' \
+#                            '${lug_boot}'
+# template_config_limph_list_values = template_config_limph_list
+# template_limph_list_shuffled = template_limph_list
+# template_config_limph_list_shuffled = template_config_limph_list
 
 ########################################################################################################################
 # income

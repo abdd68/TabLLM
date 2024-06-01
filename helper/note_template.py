@@ -47,11 +47,9 @@ class NoteTemplate(Template):
                 mapping[k] = self.format_timestamp(mapping[k])
             if isinstance(mapping[k], pd.Timedelta):
                 mapping[k] = self.format_timedelta(mapping[k])
-
         # For existing groups add prefixes and suffixes
         for k in mapping.keys():
             mapping[k] = self.prefixes[k] + str(mapping[k]) + self.suffixes[k]
-
         # Post-formatting
         mapping = {k: self.post[k](mapping[k]) if k in self.post.keys() else mapping[k] for k in mapping.keys()}
 
@@ -59,11 +57,9 @@ class NoteTemplate(Template):
         for _, _, k, _ in self.pattern.findall(self.template):
             if k not in mapping.keys():
                 mapping[k] = self.defaults[k]
-
         text = super().substitute(mapping)
 
         for fn in self.fns:
             text = fn(text)
-
         return text
 
